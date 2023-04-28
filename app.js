@@ -2,10 +2,16 @@ const express = require('express')
 const bodyParser = require('body-parser')
 
 const cors = require('cors')
+const path = require('path')
 
-const UserRoutes = require('./routes/user')
+const UserRoute = require('./routes/user')
 const sequelize = require('./util/database')
 
+const forgotPasswordRoute = require('./routes/forgotPassword')
+const errorController = require('./controller/error')
+
+const User = require('./models/user')
+const ForgotPassword = require('./models/forgotPassword')
 const app = express()
 
 app.use(cors({
@@ -15,8 +21,14 @@ app.use(cors({
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use(bodyParser.json())
 
-app.use('/user', UserRoutes)
+app.use('/user', UserRoute)
 
+app.use('/password', forgotPasswordRoute)
+
+app.use(errorController.sendError)
+
+User.hasMany(ForgotPassword)
+ForgotPassword.belongsTo(User)
 sequelize
     .sync()
     .then(() => {

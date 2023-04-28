@@ -7,8 +7,11 @@ const path = require('path')
 const UserRoute = require('./routes/user')
 const sequelize = require('./util/database')
 
+const chatRoute = require('./routes/chat')
+
 const forgotPasswordRoute = require('./routes/forgotPassword')
 const errorController = require('./controller/error')
+const OneToOneChat = require('./models/oneToOneChat')
 
 const User = require('./models/user')
 const ForgotPassword = require('./models/forgotPassword')
@@ -25,10 +28,16 @@ app.use('/user', UserRoute)
 
 app.use('/password', forgotPasswordRoute)
 
+app.use('/chat', chatRoute)
+
 app.use(errorController.sendError)
 
 User.hasMany(ForgotPassword)
 ForgotPassword.belongsTo(User)
+
+User.hasMany(OneToOneChat)
+OneToOneChat.belongsTo(User)
+
 sequelize
     .sync()
     .then(() => {

@@ -4,11 +4,20 @@ const User = require('../models/user')
 const { send } = require('process')
 const jwt = require('jsonwebtoken')
 
+exports.getUsers = async(req, res) => {
+    try {
+        const users = await User.findAll()
+        res.json({ users })
+    } catch (error) {
+        console.log(error)
+    }
+}
+
 exports.getSignupUser = async(req, res, next) => {
     try {
         const email = req.body.email
-        const userEmail = await User.findOne({ where: { email }, attributes: ['email'] })
-        if (userEmail) {
+        const userDetails = await User.findOne({ where: { email }, attributes: ['email'] })
+        if (userDetails) {
             res.status(404).send({ message: 'User exist', success: false })
         } else {
             next()
@@ -34,30 +43,30 @@ exports.postSignupUser = async(req, res, next) => {
                 })
             }
         })
-        res.send({ status: 'success' })
+        res.json({ success: true })
     } catch (err) {
         console.log(err)
     }
 
 }
-const generateToken = (id) => {
-    return jwt.sign({ userId: id }, 'secretKey')
+const generateToken = (userDetails) => {
+    return jwt.sign({ userDetails }, 'secretKey')
 }
 
 exports.userLogin = async(req, res) => {
     try {
         const { email, password } = req.body
         console.log('>>>>', req.body.email, password)
-        const userEmail = await User.findOne({ where: { email }, attributes: ['password', 'id'] })
-        if (!userEmail) {
+        const userDetails = await User.findOne({ where: { email } })
+        if (!userDetails) {
             res.status(403).send({ message: "user doesn't exists", success: false })
         } else {
-            bcrypt.compare(password, userEmail.password, function(err, result) {
+            bcrypt.compare(password, userDetails.password, function(err, result) {
                 if (err) {
                     console.log(err);
                 } else {
                     if (result)
-                        res.status(200).send({ message: "user exists", success: true, token: generateToken(userEmail.id) })
+                        res.status(200).send({ message: "user exists", success: true, token: generateToken(userDetails) })
                     else
                         res.status(404).send({ message: "wrong password", success: false })
                 }

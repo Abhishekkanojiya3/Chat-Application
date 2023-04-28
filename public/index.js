@@ -36,6 +36,7 @@ form.addEventListener('submit', async(e) => {
     try {
         await axios.post('http://localhost:3000/user/create', obj)
         alert('success')
+        window.location.href = "/public/login.html"
     } catch (err) {
         console.log(err)
         if (!error.response.data.success) {

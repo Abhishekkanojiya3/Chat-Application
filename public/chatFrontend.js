@@ -91,9 +91,16 @@ const addListners = () => {
             document.getElementById('allMessages').innerHTML = ''
             imgUpdate.innerHTML = `<img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" alt="user-avatar">`
             currentTextingPerson.textContent = users[i].querySelector('.user-name').textContent
+            await loadPreviousChats(currentTextingPerson.textContent)
             setInterval(async() => {
-                document.getElementById('allMessages').innerHTML = ''
-                await loadPreviousChats(currentTextingPerson.textContent)
+                const token = localStorage.getItem('token')
+                const recentReceivedChat = JSON.parse(localStorage.getItem('recentReceivedChat'))
+                const chats = await axios.get(`http://localhost:3000/chat/load-live-receiver-messages/?receiverName=${currentTextingPerson.textContent}&timeInMs=${recentReceivedChat.timeInMs}`, { headers: { "Authorization": token } })
+                if (chats.data.chats.length !== 0) {
+                    localStorage.setItem('recentReceivedChat', JSON.stringify(chats.data.chats[0]))
+                    loadMessagesFunction(chats.data.chats[0], chats.data.chats[0].receiverId)
+
+                }
             }, 1000)
         });
     }
@@ -101,14 +108,24 @@ const addListners = () => {
 
 const loadPreviousChats = async(userName) => {
     try {
-        console.log(userName)
+        let recentReceivedChat
         const token = localStorage.getItem('token')
         const chats = await axios.get(`http://localhost:3000/chat/load-previous-chats/?receiverName=${userName}`, { headers: { "Authorization": token } })
         const currentUserId = chats.data.userId
         for (let chat of chats.data.chats) {
             console.log(chat, chat.userId)
             loadMessagesFunction(chat, currentUserId)
+            if (currentUserId !== chat.userId) {
+                recentReceivedChat = chat
+            }
         }
+        console.log(recentReceivedChat)
+        if (recentReceivedChat) {
+            localStorage.setItem('recentReceivedChat', JSON.stringify(recentReceivedChat))
+        } else {
+            localStorage.setItem('recentReceivedChat', 'null')
+        }
+
 
     } catch (error) {
         console.log(error)

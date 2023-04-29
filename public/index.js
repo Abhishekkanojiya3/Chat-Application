@@ -39,7 +39,7 @@ form.addEventListener('submit', async(e) => {
         window.location.href = "/public/login.html"
     } catch (err) {
         console.log(err)
-        if (!error.response.data.success) {
+        if (!err.response.data.success) {
             alert('User Exists!')
         }
     }

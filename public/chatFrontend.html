@@ -13,7 +13,8 @@
 <body>
     <div class="container">
         <div class="users">
-            <ul class="user-list" id="userList">
+            <button id="createGroupButton" onclick="createGroupButtonFunction()">Create Group</button>
+            <ul class="user-list" id="groupList"></ul>
             </ul>
         </div>
         <div class="chat">
@@ -21,7 +22,7 @@
                 <div id="imgUpdate" class="chat-avatar"></div>
                 <div class="chat-info">
                     <h4 id="currentTextingPerson" class="chat-name"></h4>
-                    <p class="chat-status"></p>
+                    <p class="chat-status" id="groupOrPerson"></p>
                 </div>
             </div>
             <div class="chat-messages">

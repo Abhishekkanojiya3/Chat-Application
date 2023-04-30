@@ -9,6 +9,10 @@ router.get('/get-users', userAuthenticationController.userAuthentication, userCo
 
 router.post('/create', userController.getSignupUser, userController.postSignupUser)
 
+router.get('/check-admin-status', userAuthenticationController.userAuthentication, userController.checkAdminStatus)
+
+router.get('/get-new-users', userAuthenticationController.userAuthentication, userController.getNewUsersExceptSelf)
+
 router.post('/login', userController.userLogin)
 
 module.exports = router;

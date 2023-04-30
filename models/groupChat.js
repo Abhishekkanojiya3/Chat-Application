@@ -20,6 +20,14 @@ const GroupChat = sequelize.define('groupChat', {
     timeString: {
         type: Sequelize.STRING,
         allowNull: false
+    },
+    groupId: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+    },
+    userId: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
     }
 })
 

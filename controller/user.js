@@ -2,6 +2,8 @@ const bcrypt = require('bcrypt');
 const { Op } = require('sequelize');
 
 const User = require('../models/user')
+const UserGroup = require('../models/userGroup')
+
 const { send } = require('process')
 const jwt = require('jsonwebtoken')
 
@@ -59,6 +61,30 @@ exports.postSignupUser = async(req, res, next) => {
 const generateToken = (userDetails) => {
     return jwt.sign({ userDetails }, 'secretKey')
 }
+exports.getNewUsersExceptSelf = async(req, res) => {
+    try {
+        const presentUserIds = []
+        const groupId = req.query.groupId
+        const presentUsers = await UserGroup.findAll({ where: { id } })
+        presentUsers.forEach(user => {
+            presentUserIds.push(user.id)
+        });
+
+        const users = await User.findAll({
+            where: {
+                userName: {
+                    [Op.notIn]: [req.user.userName]
+                },
+                id: {
+                    [Op.notIn]: presentUserIds
+                }
+            }
+        })
+        res.json({ users })
+    } catch (error) {
+        console.log(error)
+    }
+}
 
 exports.userLogin = async(req, res) => {
     try {
@@ -82,4 +108,14 @@ exports.userLogin = async(req, res) => {
     } catch (error) {
         console.log(error)
     }
+}
+exports.checkAdminStatus = async(req, res) => {
+    const userData = await UserGroup.findOne({
+        where: {
+            userId: req.user.id,
+            groupId: parseInt(req.query.currentTextingPerson)
+        },
+        attributes: ['isAdmin']
+    })
+    res.json({ userData })
 }

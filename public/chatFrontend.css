@@ -260,6 +260,42 @@ body {
     margin-top: 20px;
 }
 
+#addMembersButton {
+    background-color: #007bff;
+    color: #fff;
+    padding: 10px 20px;
+    border-radius: 5px;
+    border: none;
+    cursor: pointer;
+    margin-top: 20px;
+}
+
+
+/* Button for removing existing members */
+
+#removeMembersButton {
+    background-color: #007bff;
+    color: #fff;
+    padding: 10px 20px;
+    border-radius: 5px;
+    border: none;
+    cursor: pointer;
+    margin-top: 20px;
+}
+
+
+/* Button for promoting members to admin status */
+
+#makeAdminButton {
+    background-color: #0db0c6;
+    color: #fff;
+    padding: 10px 20px;
+    border-radius: 5px;
+    border: none;
+    cursor: pointer;
+    margin-top: 20px;
+}
+
 .group-list {
     list-style-type: none;
 }

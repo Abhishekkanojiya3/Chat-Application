@@ -7,6 +7,7 @@ const helmet = require('helmet')
 const compression = require('compression')
 
 const UserRoute = require('./routes/user')
+const imageRoute = require('./routes/image')
 const sequelize = require('./util/database')
 const groupRoute = require('./routes/group')
 
@@ -66,6 +67,7 @@ app.use(cors({
 }))
 app.use(helmet())
 app.use(compression())
+app.use('/image', imageRoute)
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use(bodyParser.json())
 app.use('/group', groupRoute)

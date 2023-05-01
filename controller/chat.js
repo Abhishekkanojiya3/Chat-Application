@@ -11,7 +11,6 @@ exports.createChat = async(req, res) => {
         const message = req.body.sentMessage
         const timeInMs = req.body.timeInMs
         const timeString = req.body.timeString
-        const receiverData = await User.findOne({ where: { userName: receiverName } })
         const chat = await OneToOneChat.create({
             receiverId,
             message,

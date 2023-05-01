@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WhatsApp Clone</title>
+    <title>My Chat App</title>
     <link rel="stylesheet" href="./chatFrontend.css">
     <script defer src="http://localhost:3000/socket.io/socket.io.js"></script>
     <script src="./chatFrontend.js" defer></script>
@@ -53,6 +53,11 @@
                 </ul>
             </div>
             <div class="chat-input">
+                <div>
+                    <form id="file-form">
+                        <input type="file" id="fileInput">
+                    </form>
+                </div>
                 <input id="sentMessage" type="text" placeholder="Type your message...">
                 <button onclick="sentMessageFunction()">Send</button>
             </div>

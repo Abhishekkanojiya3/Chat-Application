@@ -8,12 +8,43 @@ let groupLiveListener = null
 let userLiveListener = null
 socket.on('chatMessage', ({ chat, message }) => {
     console.log(`Received a message from ${chat}: ${message}`);
-    loadMessagesFunction(chat.chat, chat.userId)
+    loadSocketMessagesFunction(chat.chat, chat.userId)
 });
 
 socket.on('groupChatMessage', ({ chat, message }) => {
     console.log(chat.chat, parseInt(localStorage.getItem('currentTextingPerson')), chat.userName.userName, message)
     loadGroupMessagesFunction(chat.chat, parseInt(localStorage.getItem('currentTextingPerson')), chat.userName.userName)
+});
+document.addEventListener('submit', (event) => {
+    event.preventDefault();
+});
+
+document.getElementById('file-form').addEventListener('change', async(event) => {
+    event.preventDefault()
+    try {
+        alert('File sent')
+        const selectedFile = event.target.files[0];
+        const formData = new FormData();
+        formData.append('selectedFile', selectedFile);
+
+        const groupOrPerson = document.getElementById('groupOrPerson')
+
+        const sentMessageTime = getCurrentTime()
+
+        const token = localStorage.getItem('token')
+
+        if (groupOrPerson.textContent === 'Group') {
+            const result = await axios.post(`http://localhost:3000/image/?groupId=${localStorage.getItem('currentTextingPerson')}&timeInMs=${sentMessageTime.timeInMs}&timeString=${sentMessageTime.timeString}`, formData, { headers: { "Authorization": token } });
+        } else {
+            const result = await axios.post(`http://localhost:3000/image/?receiverId=${localStorage.getItem('currentTextingPerson')}&timeInMs=${sentMessageTime.timeInMs}&timeString=${sentMessageTime.timeString}`, formData, { headers: { "Authorization": token } });
+        }
+
+        console.log('//////////////', selectedFile, formData, result);
+    } catch (error) {
+        console.log(error);
+    }
+    alert('return false')
+    return false
 });
 
 const sentMessageFunction = async() => {
@@ -317,6 +348,30 @@ const loadMessagesFunction = (chat, currentUserId) => {
     }
 }
 
+const loadSocketMessagesFunction = (chat, currentUserId) => {
+    const newMessage = chat.message
+    const messageList = document.getElementById('allMessages');
+    const newMessageListItem = document.createElement('li');
+    const newParagraph = document.createElement('p')
+    newParagraph.textContent = newMessage;
+    newParagraph.className = 'message-text'
+    const divElement = document.createElement('div')
+    divElement.className = 'message-info'
+    const spanElement = document.createElement('span')
+    spanElement.textContent = chat.timeString
+
+    divElement.appendChild(spanElement)
+    newMessageListItem.appendChild(newParagraph)
+    newMessageListItem.appendChild(divElement)
+    messageList.appendChild(newMessageListItem);
+    if (currentUserId !== chat.userId) {
+        newMessageListItem.className = 'message sent'
+        spanElement.className = 'message-time-right'
+    } else {
+        newMessageListItem.className = 'message received'
+        spanElement.className = 'message-time'
+    }
+}
 const createGroupButtonFunction = () => {
     window.location.href = '/public/createGroup.html'
 }
